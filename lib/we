@@ -1,0 +1,256 @@
+ Login() async{
+        var state = key.currentState;
+        if(state.validate()){
+          await refrence.child("users").once().then((//DataSnapshot value
+              ){
+            Map<dynamic,dynamic> values ;
+            var nameable =false;
+            var passable =false;
+            values.forEach((key, value) async {
+              if (value["name"] == name.text) {
+                nameable = true;
+                if (value["password"] == password.text) {
+                  passable = true;
+                }
+              }
+            });
+            if(nameable ==false){
+              return showDialog(context: context, builder: (context) {
+                return AlertDialog(title: new Text("Error"),
+                    content: new Text("this  name is not exist. pls try again"),
+                    actions: [
+                      new ElevatedButton(onPressed: (){Navigator.of(context).pop();}, child: Text("ok"))
+                    ]);
+              });
+
+            }
+            else if(nameable ==true&&passable==false ){
+              return showDialog(context: context, builder: (context) {
+                return AlertDialog(title: new Text("Error"),
+                    content: new Text("this  password is not correct. pls try again"),
+                    actions: [
+                      new ElevatedButton(onPressed:(){Navigator.of(context).pop();}, child: Text("ok"))
+                    ]);
+              });
+            }
+            else if(nameable ==true && passable ==true){
+              Navigator.of(context).pushReplacement(MaterialPageRoute(builder: (context){
+                return Section1(username: name.text,);
+              }));
+            }
+          });
+        }
+      }
+
+
+      void getdatasersh1()async{
+          await refrence.child("farms").once().then((DataSnapshot data){
+            if(data.value !=null){
+              Map<dynamic,dynamic> datas =data.value;
+              datas.forEach((key, value) {
+                for(int r =0 ; r<modn.length ; r++){
+                  if(value["place"].toString() == modn[r]){
+                    search1.add(value);
+                  }
+                }
+              });
+            }
+          });
+        }
+
+        void getdatasersh2(bool modn)async{
+            await refrence.child("etaha").once().then((DataSnapshot data){
+              if(data.value !=null){
+                Map<dynamic,dynamic> datas =data.value;
+                if(value =="mabit"){
+                  List times =[];
+                  var ys =true;
+                  int s =0;
+                  while(ys){
+                    if(DateTime.parse(reversetexts(text21)).add(Duration(days: s)).toString().substring(0,10) !=reversetexts(text22)){
+                      DateTime dat =DateTime.parse(reversetexts(text21)).add(Duration(days: s));
+                      times.add(dat.toString().substring(0,10));
+                    }
+                    else{
+                      times.add(reversetexts(text22));
+                      ys=false;
+                    }
+                    s++;
+                  }
+                  print("value :" + times.toString());
+                  datas.forEach((key, value) {
+                    if(modn){
+                     for(int a =0; a< search1.length ; a++){
+                       if(key.toString().trim() == search1[a]["farmname"].toString().trim()){
+                         List values =  value.toString().substring(1,value.toString().length-1).split(",");
+                         if(func(times, values) ==true){
+                           search2.add(search1[a]);
+                         }
+                       }
+                     }
+                    }
+                    else{
+                      for(int z =0 ; z<dataa.length ; z++) {
+                        if (dataa[z]["farmname"].toString().trim() == key.toString().trim()) {
+                          List values = value.toString().substring(1, value
+                              .toString()
+                              .length - 1).split(",");
+                          if (func(times, values) == true) {
+                            search2.add(dataa[z]);
+                          }
+                        }
+                      }
+                    }
+                  });
+                }
+                else{
+                  datas.forEach((key, value) {
+                    if(modn){
+                      for(int a =0; a< search1.length ; a++){
+                        if(key.toString().trim() == search1[a]["farmname"].toString().trim()){
+                    List values =  value.toString().substring(1,value.toString().length-1).split(",");
+                    for(int y=0;y < values.length ; y++){
+                      if(text1.trim() == values[y].toString().trim()){
+                        search2.add(search1[a]);
+                        break;
+                      }}}
+                    }
+                    }
+                    else{
+                      for(int a =0; a< dataa.length ; a++){
+                        if(key.toString().trim() == dataa[a]["farmname"].toString().trim()){
+                          List values =  value.toString().substring(1,value.toString().length-1).split(",");
+                          for(int y=0;y < values.length ; y++){
+                            if(text1.trim() == values[y].toString().trim()){
+                              search2.add(dataa[a]);
+                              break;
+                            }}}
+                      }
+                    }
+                  });
+                }
+              }
+            });
+
+          }
+           void getalldata()async {
+              dataa.clear();
+              await refrence.child("farms").once().then((DataSnapshot data) {
+                if (data.value != null) {
+                  Map<dynamic, dynamic> datas = data.value;
+                  datas.forEach((key, value) {
+                    dataa.add(value);
+                  });
+                }
+              });
+              print(dataa);
+            }
+
+            void getdata() async{
+                await refrence.child("farms").once().then((DataSnapshot data){
+                  Map<dynamic,dynamic> datav = data.value;
+                  datav.forEach((key, value) {
+                    if(farmname == value["farmname"]){
+                      marati.add(value);
+                      setState(() {});
+                      print(marati[0]["latlng"]);
+                    }
+                  });
+                });
+              }
+              void tarikh() async{
+                  await refrence.child("etaha").once().then((DataSnapshot data){
+                    Map<dynamic,dynamic> datav = data.value;
+                    datav.forEach((key, value) {
+                      if(key ==farmname) {
+                        toarikh.clear();
+                       List ssf= value.toString().substring(1, value
+                            .toString()
+                            .length - 1).split(",");
+                        for(int f =0 ; f< ssf.length;f++){
+                          if(DateTime.parse(ssf[f].toString().trim()).compareTo(DateTime.now()) >0){
+                            toarikh.add(ssf[f].toString().trim());
+                          }
+                        }
+                        showDialog(context: context, builder: (context) {
+                          return AlertDialog(
+                            content: new Container(height: MediaQuery.of(context).size.height*0.3,
+                              width: MediaQuery.of(context).size.width*0.3,child: ListView.builder(itemCount: toarikh.length,itemBuilder: (context,i){
+                                return Center(child: Container(margin: EdgeInsets.all(10),child:ListTile(leading:Icon(Icons.history),title: Text(toarikh[i].toString().trim(),style: TextStyle(fontSize: 20,color: Colors.blueAccent),),)));
+                              }),),actions: [ElevatedButton(onPressed: (){Navigator.of(context).pop();}, child: Text("okay"))],
+                          );
+                        });
+                      }
+                      }
+                    );
+                  });
+                }
+                  void signup() async{
+                      var able =true;
+                      var state = key.currentState;
+                      if(state.validate()){
+                        await refrence.child("users").once().then((DataSnapshot value){
+                          Map<dynamic,dynamic> values = value.value;
+                          if(values != null){
+                            values.forEach((key, value){
+                              if(value["name"] == name.text){
+                                able =false;
+                                return showDialog(context: context, builder: (context) {
+                                  return AlertDialog(title: new Text("Error"),
+                                      content: new Text("the name is already exist pls change it"),
+                                      actions: [
+                                        new ElevatedButton(onPressed: (){Navigator.of(context).pop();}, child: Text("ok"))
+                                      ]);
+                                });
+                              }
+                            });
+                            if(able){
+                              var data = {
+                                "name": name.text,
+                                "password": password.text
+                              };
+                              try {
+                                refrence.child("users").child(name.text).set(data);
+                                Navigator.of(context).pushReplacement(
+                                    MaterialPageRoute(builder: (context) {
+                                      return Mainpage(username: name.text,);
+                                    }));
+                              } on FirebaseDatabase catch (e) {
+                                return showDialog(context: context, builder: (context) {
+                                  return AlertDialog(title: new Text("Error"),
+                                      content: new Text(e.toString()),
+                                      actions: [
+                                        new ElevatedButton(onPressed: () {
+                                          Navigator.of(context).pop();
+                                        }, child: Text("ok"))
+                                      ]);
+                                });
+                              }
+                            }
+                          }
+                          if(false){
+                            var data = {
+                              "name": name.text,
+                              "password": password.text
+                            };
+                            try{
+                              refrence.child("users").child(name.text).set(data);
+                              Navigator.of(context).pushReplacement(MaterialPageRoute(builder: (context){
+                                return Section1(username: name.text,);
+                              }));
+                            } on FirebaseDatabase catch (e){
+                              return showDialog(context: context, builder: (context) {
+                                return AlertDialog(title: new Text("Error"),
+                                    content: new Text(e.toString()),
+                                    actions: [
+                                      new ElevatedButton(onPressed: (){Navigator.of(context).pop();}, child: Text("ok"))
+                                    ]);
+                              });
+                            }
+                          }
+                        });
+
+
+
+                      }
+                    }
